@@ -13,4 +13,4 @@ from .utils.dbUtils import *
 def insert(msg):
     conn = dbUtils().getConn()
     cur = conn.cursor()
-    cur.execute("insert into PACKETS_REC ")
+    cur.execute("insert into PACKETS_REC VALUES (%s,%s)" % msg.get("name"),msg.get("type"))

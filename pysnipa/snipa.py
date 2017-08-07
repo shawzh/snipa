@@ -8,6 +8,16 @@
 
 from scapy.all import *
 
-def startSniff(card,count):
 
-    pcap = sniff(iface = card, count = count)
+class ScapySniff(object):
+
+    def __init__(self):
+        self.pcap = None
+
+    def startSniff(self,card,count):
+
+        self.pcap = sniff(iface = card, count = count)
+
+    def getData(self):
+
+        self.pcap=

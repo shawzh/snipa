@@ -7,12 +7,13 @@
 # @Software: PyCharm
 
 import pymysql
-import pysnipa.config as config
+import config
 
 
 class dbUtils(object):
 
     def __init__(self):
+        # 从配置文件里导入设置
         self.url = config.URL
         self.user = config.USER
         self.password = config.PASSWORD
@@ -40,6 +41,7 @@ class dbUtils(object):
 
     def testConn(self):
         # 测试链接
+        #  TODO: test conn not complete
        if self.getConn() != None:
            return "ok"
        return "wrong"

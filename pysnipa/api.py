@@ -7,42 +7,49 @@
 # @Software: PyCharm
 
 import zerorpc
-from .utils import ethernetCard
-from .utils.dbUtils import dbUtils
-import pysnipa.snipa as snipa
+import json
+import sys
+import os
+from utils import ethernetCard
+from utils.dbUtils import dbUtils
+from snipa import ScapySniff
+import config
 from pysnipa.config import *
 import pysnipa.insertDB as insertDB
 
 
 
 class SnipaApi(object):
-    def calc(self, text):
-        """based on the input text, return the int result"""
-        try:
-            return eval(text)
-        except Exception as e:
-            return 0.0
 
-    def echo(self, text):
-        """echo any text"""
-        return text
 
     # 返回给前端网卡可选列表
     def selectCard(self):
-        return ethernetCard.listEthernetCard()
+        return json.dumps(ethernetCard.listEthernetCard())
 
     # 开始监听
     def start(self, card, count, writeDB):
-        snipa.startSniff(card, count=50)
+        ScapySniff().startSniff(card, count=50)
 
-    def ana(self):
-        pass
 
     def testDatabaseConn(self):
-        dbUtils().testConn()
+        return dbUtils().testConn()
+
+    # TODO: not exactly sure which args need
+    def getData(self):
 
 
-    def changeConfig(self,):
+
+    def changeConfig(self,json_str):
+        try:
+            data = json.load(json_str)
+            config.URL = data.get("url")
+            config.PASSWORD = data.get("pass")
+            config.DATABASE = data.get("db")
+            config.USER = data.get("user")
+            return 'ok'
+        except Exception as e:
+            return 'no'
+
 
 
 
@@ -59,4 +66,8 @@ def main():
 
 
 if __name__ == '__main__':
+    # TODO: add root nitification
+    # if os.geteuid() != 0:
+    #     print("This program must be run as root. Aborting.")
+    #     sys.exit(1)
     main()
