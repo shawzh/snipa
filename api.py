@@ -6,17 +6,14 @@
 # @File    :api.py
 # @Software: PyCharm
 
-import zerorpc
 import json
-import sys
-import os
+
+import zerorpc
+from config import *
+import config
+from snipa import ScapySniff
 from utils import ethernetCard
 from utils.dbUtils import dbUtils
-from snipa import ScapySniff
-import config
-from pysnipa.config import *
-import pysnipa.insertDB as insertDB
-
 
 
 class SnipaApi(object):

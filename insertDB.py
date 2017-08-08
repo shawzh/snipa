@@ -7,7 +7,7 @@
 # @Software: PyCharm
 
 
-from .utils.dbUtils import *
+from utils.dbUtils import *
 
 
 def insert(msg):
