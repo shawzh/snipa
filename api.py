@@ -8,7 +8,6 @@
 
 import json
 
-import zerorpc
 from config import *
 import config
 from snipa import ScapySniff
@@ -48,23 +47,8 @@ class SnipaApi(object):
             return 'no'
 
 
-
-
-def parse_port():
-    return str(4242)
-
-
 def main():
-    addr = 'tcp://127.0.0.1:' + parse_port()
-    s = zerorpc.Server(SnipaApi())
-    s.bind(addr)
-    print('start running on {}'.format(addr))
-    s.run()
 
 
 if __name__ == '__main__':
-    # TODO: add root nitification
-    # if os.geteuid() != 0:
-    #     print("This program must be run as root. Aborting.")
-    #     sys.exit(1)
     main()

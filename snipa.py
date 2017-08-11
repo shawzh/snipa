@@ -18,6 +18,6 @@ class ScapySniff(object):
 
         self.pcap = sniff(iface = card, count = count)
 
-    def getData(self):
-
-        self.pcap=
+    # def getData(self):
+    #
+    #     self.pcap=

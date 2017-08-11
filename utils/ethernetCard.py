@@ -17,7 +17,7 @@ def listEthernetCard():
 
             # 去掉本地回环
             if item[0] == 2 and not item[1] == '127.0.0.1':
-                    netcard_info.append((k, item[1]))
+                    netcard_info.append(k)
 
 
     # 返回信息像这样：
