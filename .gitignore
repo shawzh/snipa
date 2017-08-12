@@ -1,0 +1,10 @@
+
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/preferred-vcs.xml
+.idea/snipa.iml
+.idea/workspace.xml
+__pycache__/
+main.qmlc
+utils/__pycache__/

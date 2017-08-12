@@ -11,13 +11,18 @@ from scapy.all import *
 
 class ScapySniff(object):
 
-    def __init__(self):
-        self.pcap = None
+    @staticmethod
+    def startSniffDeault(card):
+        print("start default sniff")
 
-    def startSniff(self,card,count):
+        # 默认监听，每次监听3个记录，循环调用这个方法
 
-        self.pcap = sniff(iface = card, count = count)
+        return sniff(iface=card, count=3)
 
-    # def getData(self):
-    #
-    #     self.pcap=
+    def startSniff(self, **kwargs):
+        sniff()
+
+
+        # def getData(self):
+        #
+        #     self.pcap=
