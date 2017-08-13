@@ -12,8 +12,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
 import config
-import re
-
+import datetime
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -209,8 +208,9 @@ class Ui_MainWindow(object):
 
         for p in pcaps:
             # 只有一层
+            time = datetime.datetime.fromtimestamp(p.time).strftime("%Y-%m-%d %H:%M:%S")
             if p.payload.name == 'NoPayload':
-                row = [p.time,
+                row = [time,
                        p.fields['src'],
                        p.fields['dst'],
                        p.name,
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
 
             # 共两层
             elif p.payload.payload.name == 'NoPayload':
-                row = [p.time,
+                row = [time,
                        p.payload.fields['psrc'],
                        p.payload.fields['pdst'],
                        p.payload.name,
@@ -227,7 +227,7 @@ class Ui_MainWindow(object):
                        p.payload.original]
             # 共三层
             elif p.payload.payload.payload.name == 'NoPayload' or p.payload.payload.payload.payload.name == 'NoPayload':
-                row = [p.time,
+                row = [time,
                        p.payload.fields['src'],
                        p.payload.fields['dst'],
                        p.payload.payload.name,
