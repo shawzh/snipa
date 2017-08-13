@@ -77,4 +77,9 @@ Rectangle {
     }
 
 
+    function getData(){
+        
+    }
+
+
 }
