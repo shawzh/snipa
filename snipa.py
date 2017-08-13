@@ -1,28 +1,144 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 17-8-6 下午5:15
-# @Author  : Shawz
-# @Site    :
-# @File    : snipa.py
-# @Software: PyCharm
 
-from scapy.all import *
+# Form implementation generated from reading ui file 'snipa.ui'
+#
+# Created by: PyQt5 UI code generator 5.9
+#
+# WARNING! All changes made in this file will be lost!
 
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-class ScapySniff(object):
-
-    @staticmethod
-    def startSniffDeault(card):
-        print("start default sniff")
-
-        # 默认监听，每次监听3个记录，循环调用这个方法
-
-        return sniff(iface=card, count=3)
-
-    def startSniff(self, **kwargs):
-        sniff()
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
 
 
-        # def getData(self):
-        #
-        #     self.pcap=
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1929, 1726)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+
+
+        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBox.setGeometry(QtCore.QRect(390, 80, 471, 51))
+        self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(40, 10, 391, 71))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(40, 90, 321, 31))
+        self.label_2.setObjectName("label_2")
+        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit.setGeometry(QtCore.QRect(140, 230, 831, 39))
+        self.lineEdit.setObjectName("lineEdit")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(900, 80, 187, 51))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(1110, 80, 187, 51))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(1340, 80, 187, 57))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(1010, 230, 261, 33))
+        self.label_3.setObjectName("label_3")
+        self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
+        self.treeWidget.setGeometry(QtCore.QRect(40, 300, 1851, 541))
+        self.treeWidget.setObjectName("treeWidget")
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_2.setGeometry(QtCore.QRect(140, 160, 119, 39))
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(40, 230, 114, 33))
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(40, 160, 114, 33))
+        self.label_5.setObjectName("label_5")
+        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
+        self.toolButton.setGeometry(QtCore.QRect(1270, 230, 131, 39))
+        self.toolButton.setObjectName("toolButton")
+        self.treeWidget_2 = QtWidgets.QTreeWidget(self.centralwidget)
+        self.treeWidget_2.setGeometry(QtCore.QRect(40, 870, 881, 701))
+        self.treeWidget_2.setObjectName("treeWidget_2")
+        self.treeWidget_2.headerItem().setText(0, "1")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1929, 47))
+        self.menubar.setObjectName("menubar")
+        self.menuFile = QtWidgets.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
+        self.menuHelp = QtWidgets.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.actionStartSniff = QtWidgets.QAction(MainWindow)
+        self.actionStartSniff.setObjectName("actionStartSniff")
+        self.actionEndSniff = QtWidgets.QAction(MainWindow)
+        self.actionEndSniff.setObjectName("actionEndSniff")
+        self.actionSaveDataToFile = QtWidgets.QAction(MainWindow)
+        self.actionSaveDataToFile.setObjectName("actionSaveDataToFile")
+        self.actionLoadDataFromFile = QtWidgets.QAction(MainWindow)
+        self.actionLoadDataFromFile.setObjectName("actionLoadDataFromFile")
+        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
+        self.actionAbout.setObjectName("actionAbout")
+        self.menuFile.addAction(self.actionStartSniff)
+        self.menuFile.addAction(self.actionEndSniff)
+        self.menuFile.addAction(self.actionSaveDataToFile)
+        self.menuFile.addAction(self.actionLoadDataFromFile)
+        self.menuFile.addAction(self.actionExit)
+        self.menuHelp.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "New Item"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "New Item"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "New Item"))
+        self.label.setText(_translate("MainWindow", "Welcome to Snipa"))
+        self.label_2.setText(_translate("MainWindow", "Aviliable Interfaces shown:"))
+        self.pushButton.setText(_translate("MainWindow", "Start"))
+        self.pushButton_2.setText(_translate("MainWindow", "Pause"))
+        self.pushButton_3.setText(_translate("MainWindow", "PushButton"))
+        self.label_3.setText(_translate("MainWindow", "Write into Databse:"))
+        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "No."))
+        self.treeWidget.headerItem().setText(1, _translate("MainWindow", "Time"))
+        self.treeWidget.headerItem().setText(2, _translate("MainWindow", "Source"))
+        self.treeWidget.headerItem().setText(3, _translate("MainWindow", "Desti"))
+        self.treeWidget.headerItem().setText(4, _translate("MainWindow", "Proto"))
+        self.treeWidget.headerItem().setText(5, _translate("MainWindow", "Protocol"))
+        self.treeWidget.headerItem().setText(6, _translate("MainWindow", "Info"))
+        __sortingEnabled = self.treeWidget.isSortingEnabled()
+        self.treeWidget.setSortingEnabled(False)
+        self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "New Item"))
+        self.treeWidget.topLevelItem(0).setText(1, _translate("MainWindow", "j"))
+        self.treeWidget.topLevelItem(0).setText(2, _translate("MainWindow", "k"))
+        self.treeWidget.topLevelItem(1).setText(0, _translate("MainWindow", "New Item"))
+        self.treeWidget.topLevelItem(1).setText(1, _translate("MainWindow", "l"))
+        self.treeWidget.topLevelItem(1).setText(2, _translate("MainWindow", "l"))
+        self.treeWidget.setSortingEnabled(__sortingEnabled)
+        self.label_4.setText(_translate("MainWindow", "Filter:"))
+        self.label_5.setText(_translate("MainWindow", "Count:"))
+        self.toolButton.setText(_translate("MainWindow", "Settings"))
+        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help"))
+        self.actionStartSniff.setText(_translate("MainWindow", "StartSniff"))
+        self.actionEndSniff.setText(_translate("MainWindow", "EndSniff"))
+        self.actionSaveDataToFile.setText(_translate("MainWindow", "SaveDataToFile"))
+        self.actionLoadDataFromFile.setText(_translate("MainWindow", "LoadDataFromFile"))
+        self.actionExit.setText(_translate("MainWindow", "Exit"))
+        self.actionAbout.setText(_translate("MainWindow", "About"))
+

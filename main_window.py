@@ -10,9 +10,10 @@ import sys
 import os
 import PyQt5.QtCore as QtCore
 from PyQt5.QtQuick import QQuickView
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication,QMainWindow
 from utils import ethernetCard
-from snipa import ScapySniff
+import snipa
+
 
 
 class MainWindow(QtCore.QObject):
@@ -28,12 +29,12 @@ class MainWindow(QtCore.QObject):
         self.r.setCard(ethernetCard.listEthernetCard())
 
     # 在不指定监听参数下默认使用此方法，一次返回3条
-    @QtCore.Slot()
-    def startDefaultSniff(self):
-        card = self.r.getCardComboCurrentText()
-        msg = ScapySniff.startSniffDeault(card)
-        for i in msg:
-            print(i)
+    # @QtCore.Slot()
+    # def startDefaultSniff(self):
+    #     card = self.r.getCardComboCurrentText()
+    #     msg = ScapySniff.startSniffDeault(card)
+    #     for i in msg:
+    #         print(i)
 
     # @QtCore.Slot()
     # def start
@@ -41,24 +42,24 @@ class MainWindow(QtCore.QObject):
 
 if __name__ == '__main__':
 
-    # 提升到root权限，因为监听网卡需要root权限
-    print(os.getegid())
-    # if os.geteuid():
-    #     args = [sys.executable] + sys.argv
-    #     # 下面两种写法，一种使用su，一种使用sudo，都可以
-    #     #os.execlp('su', 'su', '-c', ' '.join(args))
-    #     os.execlp('sudo', 'sudo', *args)
 
-    # 以下是以root执行
+    # app = QApplication(sys.argv)
+    # # 加载qml文件并显示GUI界面
+    # view = QQuickView()
+    # view.setSource(QtCore.QUrl("main.qml"))
+    # view.show()
+    #
+    # # GUI signal与slot的传递依靠MainWindow类
+    # mw = MainWindow(view.rootObject())
+    # context = view.rootContext()
+    # context.setContextProperty("mw", mw)
+    #
+    # sys.exit(app.exec_())
+
     app = QApplication(sys.argv)
-    # 加载qml文件并显示GUI界面
-    view = QQuickView()
-    view.setSource(QtCore.QUrl("main.qml"))
-    view.show()
-
-    # GUI signal与slot的传递依靠MainWindow类
-    mw = MainWindow(view.rootObject())
-    context = view.rootContext()
-    context.setContextProperty("mw", mw)
-
+    MainWindow = QMainWindow()
+    ui = snipa.Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
     sys.exit(app.exec_())
+
