@@ -5,17 +5,19 @@
 # Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
-import sys
+import sys,os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QStandardItem
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem
+from setting import Ui_Dialog as Form
+from tableService import TableService
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem,QWidget
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
-import config
-import datetime
+import configparser
 
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1929, 1726)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -25,6 +27,7 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(390, 80, 471, 51))
         self.comboBox.setObjectName("InterfaceComboBox")
+
         self.addItemsToInterfaceComboBox()
 
         # 欢迎label
@@ -46,6 +49,7 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(900, 80, 187, 51))
         self.pushButton.setObjectName("pushButton")
+
         # 监听pushButton按下
         self.pushButton.clicked.connect(self.OnpushButtonPressed)
 
@@ -58,6 +62,8 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(1010, 230, 261, 33))
         self.label_3.setObjectName("label_3")
+
+
 
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(40, 290, 1851, 551))
@@ -78,6 +84,12 @@ class Ui_MainWindow(object):
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
         self.toolButton.setGeometry(QtCore.QRect(1270, 230, 131, 39))
         self.toolButton.setObjectName("toolButton")
+        self.toolButton.clicked.connect(self.open_dialog)
+
+
+
+
+
 
         self.treeWidget_2 = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget_2.setGeometry(QtCore.QRect(40, 860, 891, 771))
@@ -154,6 +166,10 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        #加载配置文件
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
+
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
@@ -184,7 +200,15 @@ class Ui_MainWindow(object):
         self.checkBox_3.setText(_translate("MainWindow", "CheckBox"))
         self.checkBox_4.setText(_translate("MainWindow", "CheckBox"))
         self.label_7.setText(_translate("MainWindow", "QuickConfig:"))
-        self.label_8.setText(_translate("MainWindow", "Status: No Configure"))
+
+
+        if(self.config['DATABASE']['STATUS'] == 'Not Configure'):
+            self.label_8.setText(_translate("MainWindow", "Status: "+self.config['DATABASE']['STATUS']))
+        else:
+            self.label_8.setText(_translate("MainWindow", "Status: Not Configure" ))
+
+
+
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionStartSniff.setText(_translate("MainWindow", "StartSniff"))
@@ -201,54 +225,46 @@ class Ui_MainWindow(object):
 
     # 调用默认监听，一次取三条
     def OnpushButtonPressed(self):
-        config.CURRENT_CARD = self.comboBox.currentText()
+        self.config['NETWORK']['CURRENT_CARD'] = self.comboBox.currentText()
         print("start sniff")
+        self.test()
 
-        pcaps = Sniff.startDefaultSniff(config.CURRENT_CARD)
+    def test(self):
+        pcaps = Sniff.startDefaultSniff(self.config['NETWORK']['CURRENT_CARD'])
+        table = TableService(pcaps=pcaps,model=self.model)
+        table.insertDataToTable()
 
-        for p in pcaps:
-            # 只有一层
-            time = datetime.datetime.fromtimestamp(p.time).strftime("%Y-%m-%d %H:%M:%S")
-            if p.payload.name == 'NoPayload':
-                row = [time,
-                       p.fields['src'],
-                       p.fields['dst'],
-                       p.name,
-                       len(p.original),
-                       p.original]
+    def open_dialog(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = Form()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        dialog.show()
 
-            # 共两层
-            elif p.payload.payload.name == 'NoPayload':
-                row = [time,
-                       p.payload.fields['psrc'],
-                       p.payload.fields['pdst'],
-                       p.payload.name,
-                       len(p.original),
-                       p.payload.original]
-            # 共三层
-            elif p.payload.payload.payload.name == 'NoPayload' or p.payload.payload.payload.payload.name == 'NoPayload':
-                row = [time,
-                       p.payload.fields['src'],
-                       p.payload.fields['dst'],
-                       p.payload.payload.name,
-                       len(p.original),
-                       p.payload.payload.original]
 
-            else:
-                print("miss")
-                continue
-                # 没有这么多层的
 
-            if (row[2] == '239.255.255.250'):
-                row[3] = 'SSDP'
-            rowCount = self.model.rowCount()
-            for n,key in enumerate(row):
-                item = QStandardItem(str(key))
-                self.model.setItem(rowCount,n,item)
+
+
+class SetingWindow(QWidget):
+
+    def __init__(self, ):
+        super().__init__()
+        self.resize(200, 200)
+        self.setStyleSheet("background: black")
+
+    def handle_click(self):
+        if not self.isVisible():
+            self.show()
+
+
+    def handle_close(self):
+        self.close()
+
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     MainWindow = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)

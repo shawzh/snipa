@@ -7,23 +7,23 @@
 # @Software: PyCharm
 
 import pymysql
-import config
 
 
 class dbUtils(object):
 
-    def __init__(self):
-        # 从配置文件里导入设置
-        self.url = config.URL
-        self.user = config.USER
-        self.password = config.PASSWORD
-        self.databse = config.DATABASE
+    def __init__(self,config):
+
+        self.config = config
+        self.url = config['DATABASE']['URL']
+        self.user = config['DATABASE']['USER']
+        self.password = config['DATABASE']['PASSWORD']
+        self.database = config['DATABASE']['DATABASE']
 
 
     def getConn(self):
         # 获得数据库链接
         try:
-            return pymysql.connect(self.url, self.user, self.password, self.databse)
+            return pymysql.connect(self.url, self.user, self.password, self.database)
         except Exception as e:
             print(e)
             return None
@@ -37,7 +37,13 @@ class dbUtils(object):
             print(e)
             return 0
 
-
+    def writeToConfigFile(self,url,databse,password,user):
+        with open('config.ini', 'w') as configfile:
+            self.config['DATABASE']['URL'] = url
+            self.config['DATABASE']['DATABASE'] = databse
+            self.config['DATABASE']['PASSWORD'] = password
+            self.config['DATABASE']['USER'] = user
+            self.config.write(configfile)
 
     def testConn(self):
         # 测试链接
