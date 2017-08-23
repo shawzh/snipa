@@ -5,18 +5,27 @@
 # Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
-import sys,os
+import sys, os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from setting import Ui_Dialog as Form
 from tableService import TableService
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem,QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,QHeaderView
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
 import configparser
+from outputRredirection import TextArea
+import sys
+
+stdout = sys.stdout
+sys.stdout = TextArea()
+
 
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
+
+        # 加载配置文件
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1929, 1726)
@@ -63,11 +72,12 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(1010, 230, 261, 33))
         self.label_3.setObjectName("label_3")
 
-
-
-        self.tableView = QtWidgets.QTableView(self.centralwidget)
+        self.tableView = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableView.setColumnCount(6)
         self.tableView.setGeometry(QtCore.QRect(40, 290, 1851, 551))
         self.tableView.setObjectName("tableView")
+        self.tableView.horizontalHeader().setStretchLastSection(True)
+        self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setGeometry(QtCore.QRect(140, 160, 119, 39))
@@ -86,15 +96,11 @@ class Ui_MainWindow(object):
         self.toolButton.setObjectName("toolButton")
         self.toolButton.clicked.connect(self.open_dialog)
 
-
-
-
-
-
         self.treeWidget_2 = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget_2.setGeometry(QtCore.QRect(40, 860, 891, 771))
         self.treeWidget_2.setObjectName("treeWidget_2")
         self.treeWidget_2.headerItem().setText(0, "Formated Data")
+        self.tableView.itemClicked.connect(self.outSelect)
 
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(290, 160, 151, 33))
@@ -166,12 +172,9 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        #加载配置文件
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
 
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle("Sniff")
 
         self.label.setText(_translate("MainWindow", "Welcome to Snipa"))
         self.label_2.setText(_translate("MainWindow", "Aviliable Interfaces shown:"))
@@ -179,36 +182,24 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Pause"))
         self.label_3.setText(_translate("MainWindow", "Write into Databse:"))
 
-        self.model = QtGui.QStandardItemModel(self.tableView)
-        self.model.setColumnCount(6)
-        #self.model.setHeaderData(0, QtCore.Qt.Horizontal, "No.")
-        self.model.setHeaderData(0, QtCore.Qt.Horizontal, "Time")
-        self.model.setHeaderData(1, QtCore.Qt.Horizontal, "Source")
-        self.model.setHeaderData(2, QtCore.Qt.Horizontal, "Destination")
-        self.model.setHeaderData(3, QtCore.Qt.Horizontal, "Protocol")
-        self.model.setHeaderData(4, QtCore.Qt.Horizontal, "Length")
-        self.model.setHeaderData(5, QtCore.Qt.Horizontal, "Info")
 
-        self.tableView.setModel(self.model)
+        self.treeWidget_2.setHeaderLabels(['key','Value'])
+        self.treeWidget_2.setColumnCount(2)
+
+        self.tableView.setHorizontalHeaderLabels(['Time', 'Source', 'Destination', 'Protocol',
+                                              'Length', 'Info'])
 
         self.label_4.setText(_translate("MainWindow", "Filter:"))
         self.label_5.setText(_translate("MainWindow", "Count:"))
         self.toolButton.setText(_translate("MainWindow", "Settings"))
         self.label_6.setText(_translate("MainWindow", "TimeLimit："))
-        self.checkBox.setText(_translate("MainWindow", "TCP"))
-        self.checkBox_2.setText(_translate("MainWindow", "UDP"))
+        self.checkBox.setText(_translate("MainWindow", "write into database"))
+        self.checkBox_2.setText(_translate("MainWindow", "only UDP"))
         self.checkBox_3.setText(_translate("MainWindow", "CheckBox"))
         self.checkBox_4.setText(_translate("MainWindow", "CheckBox"))
         self.label_7.setText(_translate("MainWindow", "QuickConfig:"))
 
-
-        if(self.config['DATABASE']['STATUS'] == 'Not Configure'):
-            self.label_8.setText(_translate("MainWindow", "Status: "+self.config['DATABASE']['STATUS']))
-        else:
-            self.label_8.setText(_translate("MainWindow", "Status: Not Configure" ))
-
-
-
+        self.label_8.setText(_translate("MainWindow", "Status: " + self.config['DATABASE']['STATUS']))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionStartSniff.setText(_translate("MainWindow", "StartSniff"))
@@ -226,45 +217,78 @@ class Ui_MainWindow(object):
     # 调用默认监听，一次取三条
     def OnpushButtonPressed(self):
         self.config['NETWORK']['CURRENT_CARD'] = self.comboBox.currentText()
-        print("start sniff")
-        self.test()
 
-    def test(self):
-        pcaps = Sniff.startDefaultSniff(self.config['NETWORK']['CURRENT_CARD'])
-        table = TableService(pcaps=pcaps,model=self.model)
+        self.start()
+
+    def start(self):
+
+        args = {'count': self.lineEdit_2.text(),
+                'timeLimit': self.spinBox.text(),
+                'tcp': self.checkBox.isChecked(),
+                'udp': self.checkBox_2.isChecked(),
+                'filter': self.lineEdit.text(),
+                'iface': self.config['NETWORK']['CURRENT_CARD']}
+
+        if self.lineEdit_2.text() == '' and self.spinBox.text() == '0' and self.lineEdit.text() == '':
+
+            self.pcaps = Sniff.startDefaultSniff(self.config['NETWORK']['CURRENT_CARD'])
+
+        else:
+            s = Sniff()
+
+            self.pcaps = s.Sniff(**args)
+
+        table = TableService(pcaps=self.pcaps, model=self.tableView)
         table.insertDataToTable()
+
+    def OnClickedTableItem(self):
+        self.textBrowser.clicked.connect(self.OnClickedTableItem())
 
     def open_dialog(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = Form()
         dialog.ui.setupUi(dialog)
-        dialog.exec_()
         dialog.show()
+        dialog.exec_()
+
+    def outSelect(self, Item=None):
+        if Item == None:
+            return
+
+        index = self.tableView.currentIndex()
+        self.createTreeWidget(index)
+        self.createTextBrowser(index)
+
+
+    def createTreeWidget(self,index):
+        info = self.pcaps[index.row()]
+        try:
+            info.show()
+        except:
+           pass
+        root1 = QTreeWidgetItem(self.treeWidget_2)
+        root2 = QTreeWidgetItem(self.treeWidget_2)
+        root3 = QTreeWidgetItem(self.treeWidget_2)
+        root4 = QTreeWidgetItem(self.treeWidget_2)
+        root1.setText(0, info['Ether'])
+        root2.setText(0,info['IP'])
+
+        self.treeWidget_2.addTopLevelItem(root1)
 
 
 
-
-
-class SetingWindow(QWidget):
-
-    def __init__(self, ):
-        super().__init__()
-        self.resize(200, 200)
-        self.setStyleSheet("background: black")
-
-    def handle_click(self):
-        if not self.isVisible():
-            self.show()
-
-
-    def handle_close(self):
-        self.close()
+    def createTextBrowser(self,index):
+        info = self.pcaps[index.row()]
+        try:
+            self.pcaps.rawhexdump()
+        except:
+            print('miss')
+        self.textBrowser.append('i')
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
     MainWindow = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)

@@ -7,9 +7,13 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from utils.dbUtils import dbUtils
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
+
+        self.Dialog = Dialog
         Dialog.setObjectName("Dialog")
         Dialog.resize(594, 423)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
@@ -56,12 +60,13 @@ class Ui_Dialog(object):
         self.label_4.setText(_translate("Dialog", "Database："))
 
     def accept(self):
-
-        self.lineEdit.text()
-        self.lineEdit_2.text()
-        self.lineEdit_3.text()
-        self.lineEdit_4.text()
+        dbUtils().writeToConfigFile( self.lineEdit.text(),
+                                     self.lineEdit_4.text(),
+                                     self.lineEdit_3.text(),
+                                     self.lineEdit_2.text())
+        self.Dialog.close()
 
     def reject(self):
-        pass
+        self.Dialog.close()
+
 

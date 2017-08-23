@@ -7,23 +7,23 @@
 # @Software: PyCharm
 
 import pymysql
-
+import configparser
 
 class dbUtils(object):
 
-    def __init__(self,config):
-
-        self.config = config
-        self.url = config['DATABASE']['URL']
-        self.user = config['DATABASE']['USER']
-        self.password = config['DATABASE']['PASSWORD']
-        self.database = config['DATABASE']['DATABASE']
+    def __init__(self):
+        # 加载配置文件
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
 
 
     def getConn(self):
         # 获得数据库链接
         try:
-            return pymysql.connect(self.url, self.user, self.password, self.database)
+            return pymysql.connect( self.config['DATABASE']['URL'],
+                                    self.config['DATABASE']['USER'],
+                                    self.config['DATABASE']['PASSWORD'],
+                                    self.config['DATABASE']['DATABASE'])
         except Exception as e:
             print(e)
             return None
