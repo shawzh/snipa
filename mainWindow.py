@@ -210,7 +210,6 @@ class Ui_MainWindow(object):
     # 调用默认监听，一次取三条
     def OnpushButtonPressed(self):
         self.config['NETWORK']['CURRENT_CARD'] = self.comboBox.currentText()
-
         self.start()
 
     def start(self):
@@ -223,14 +222,10 @@ class Ui_MainWindow(object):
                 'iface': self.config['NETWORK']['CURRENT_CARD']}
 
         if self.lineEdit_2.text() == '' and self.spinBox.text() == '0' and self.lineEdit.text() == '':
-
             self.pcaps = Sniff.startDefaultSniff(self.config['NETWORK']['CURRENT_CARD'])
-
         else:
             s = Sniff()
-
             self.pcaps = s.Sniff(**args)
-
         table = TableService(pcaps=self.pcaps, model=self.tableView)
         table.insertDataToTable()
 
@@ -247,7 +242,6 @@ class Ui_MainWindow(object):
     def outSelect(self, Item=None):
         if Item == None:
             return
-
         index = self.tableView.currentIndex()
         self.createTextBrowser(index)
         self.createTreeWidget(index)
