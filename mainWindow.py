@@ -6,12 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 import sys, os
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QPixmap
 
 from setting import Ui_Dialog as Form
 from tableService import TableService
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,QHeaderView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
 import configparser
@@ -99,7 +99,6 @@ class Ui_MainWindow(object):
         self.label_9.setGeometry(QtCore.QRect(40, 860, 891, 771))
         self.label_9.setObjectName("label_9")
 
-
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(290, 160, 151, 33))
         self.label_6.setObjectName("label_6")
@@ -180,10 +179,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Pause"))
         self.label_3.setText(_translate("MainWindow", "Write into Databse:"))
 
-
-
         self.tableView.setHorizontalHeaderLabels(['Time', 'Source', 'Destination', 'Protocol',
-                                              'Length', 'Info'])
+                                                  'Length', 'Info'])
 
         self.label_4.setText(_translate("MainWindow", "Filter:"))
         self.label_5.setText(_translate("MainWindow", "Count:"))
@@ -252,27 +249,25 @@ class Ui_MainWindow(object):
             return
 
         index = self.tableView.currentIndex()
-        self.createTreeWidget(index)
         self.createTextBrowser(index)
+        self.createTreeWidget(index)
 
 
-    def createTreeWidget(self,index):
+    def createTreeWidget(self, index):
         info = self.pcaps[index.row()]
         info.psdump("test.eps")
         os.remove('test.jpg')
         img = Image.open("test.eps")
         img.save("test.jpg", "JPEG")
-        self.label_9.setPixmap(QPixmap("test.jpg"))
+        self.label_9.setPixmap(QPixmap("test.jpg").scaled(self.label_9.width(), self.label_9.height()))
 
-    def createTextBrowser(self,index):
+    def createTextBrowser(self, index):
         info = self.pcaps[index.row()]
         try:
             self.textBrowser.clear()
             self.textBrowser.append(info.showdump())
         except:
             print('miss')
-
-
 
 
 if __name__ == '__main__':
