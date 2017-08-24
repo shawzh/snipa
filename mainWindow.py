@@ -7,13 +7,15 @@
 # WARNING! All changes made in this file will be lost!
 import sys, os
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QPixmap
+
 from setting import Ui_Dialog as Form
 from tableService import TableService
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,QHeaderView
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
 import configparser
-
+from PIL import Image
 
 
 class Ui_MainWindow(object):
@@ -74,6 +76,7 @@ class Ui_MainWindow(object):
         self.tableView.setObjectName("tableView")
         self.tableView.horizontalHeader().setStretchLastSection(True)
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tableView.itemClicked.connect(self.outSelect)
 
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setGeometry(QtCore.QRect(140, 160, 119, 39))
@@ -92,11 +95,10 @@ class Ui_MainWindow(object):
         self.toolButton.setObjectName("toolButton")
         self.toolButton.clicked.connect(self.open_dialog)
 
-        self.treeWidget_2 = QtWidgets.QTreeWidget(self.centralwidget)
-        self.treeWidget_2.setGeometry(QtCore.QRect(40, 860, 891, 771))
-        self.treeWidget_2.setObjectName("treeWidget_2")
-        self.treeWidget_2.headerItem().setText(0, "Formated Data")
-        self.tableView.itemClicked.connect(self.outSelect)
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(40, 860, 891, 771))
+        self.label_9.setObjectName("label_9")
+
 
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(290, 160, 151, 33))
@@ -179,8 +181,6 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Write into Databse:"))
 
 
-        self.treeWidget_2.setHeaderLabels(['key','Value'])
-        self.treeWidget_2.setColumnCount(2)
 
         self.tableView.setHorizontalHeaderLabels(['Time', 'Source', 'Destination', 'Protocol',
                                               'Length', 'Info'])
@@ -258,27 +258,17 @@ class Ui_MainWindow(object):
 
     def createTreeWidget(self,index):
         info = self.pcaps[index.row()]
-
-        root1 = QTreeWidgetItem(self.treeWidget_2)
-        root2 = QTreeWidgetItem(self.treeWidget_2)
-        root3 = QTreeWidgetItem(self.treeWidget_2)
-        root4 = QTreeWidgetItem(self.treeWidget_2)
-        s=info['IP'].showdump()
-
-        root1.setText(0, info['Ether'].summary())
-        info['IP'].nsummary()
-        #root2.setText(0,)
-
-        self.treeWidget_2.addTopLevelItem(root1)
-        self.treeWidget_2.addTopLevelItem(root2)
-
-
+        info.psdump("test.eps")
+        os.remove('test.jpg')
+        img = Image.open("test.eps")
+        img.save("test.jpg", "JPEG")
+        self.label_9.setPixmap(QPixmap("test.jpg"))
 
     def createTextBrowser(self,index):
         info = self.pcaps[index.row()]
         try:
-            self.pcaps.rawhexdump()
-            #self.textBrowser.append()
+            self.textBrowser.clear()
+            self.textBrowser.append(info.showdump())
         except:
             print('miss')
 
