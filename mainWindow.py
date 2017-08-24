@@ -13,11 +13,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
 import configparser
-from outputRredirection import TextArea
-import sys
 
-stdout = sys.stdout
-sys.stdout = TextArea()
 
 
 class Ui_MainWindow(object):
@@ -262,18 +258,19 @@ class Ui_MainWindow(object):
 
     def createTreeWidget(self,index):
         info = self.pcaps[index.row()]
-        try:
-            info.show()
-        except:
-           pass
+
         root1 = QTreeWidgetItem(self.treeWidget_2)
         root2 = QTreeWidgetItem(self.treeWidget_2)
         root3 = QTreeWidgetItem(self.treeWidget_2)
         root4 = QTreeWidgetItem(self.treeWidget_2)
-        root1.setText(0, info['Ether'])
-        root2.setText(0,info['IP'])
+        s=info['IP'].showdump()
+
+        root1.setText(0, info['Ether'].summary())
+        info['IP'].nsummary()
+        #root2.setText(0,)
 
         self.treeWidget_2.addTopLevelItem(root1)
+        self.treeWidget_2.addTopLevelItem(root2)
 
 
 
@@ -281,9 +278,10 @@ class Ui_MainWindow(object):
         info = self.pcaps[index.row()]
         try:
             self.pcaps.rawhexdump()
+            #self.textBrowser.append()
         except:
             print('miss')
-        self.textBrowser.append('i')
+
 
 
 

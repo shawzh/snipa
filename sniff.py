@@ -16,7 +16,7 @@ class Sniff():
 
         # todo more than one args ?
         if kwargs['count'] != '':
-            print(int(kwargs['count']))
+
 
             return sniff(iface=kwargs['iface'],count=int(kwargs['count']))
         if kwargs['timeLimit'] != '':
