@@ -9,8 +9,14 @@ only support Linux
 Execute:
 
 ```
+git clone https://github.com/shawzh/snipa.git
+cd snipa 
 pip install requirements.txt
+```
 
+Also need:
+```angular2html
+sudo apt-get install texlive-latex-base
 ```
 
 ## Run
