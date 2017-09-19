@@ -7,13 +7,14 @@
 # WARNING! All changes made in this file will be lost!
 import sys, os
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QPixmap
-
+from PyQt5.QtGui import QPicture,QPixmap
+from analysis import graph
 from setting import Ui_Dialog as Form
 from tableService import TableService
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView
 from sniff import Sniff
 from utils.ethernetCard import listEthernetCard
+from insertDB import insert
 import configparser
 from PIL import Image
 
@@ -26,110 +27,103 @@ class Ui_MainWindow(object):
         self.config.read('config.ini')
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1929, 1726)
+        MainWindow.resize(970, 770)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
         # 网卡选择combobox
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(390, 80, 471, 51))
+        self.comboBox.setGeometry(QtCore.QRect(195, 40, 235, 25))
         self.comboBox.setObjectName("InterfaceComboBox")
 
         self.addItemsToInterfaceComboBox()
 
         # 欢迎label
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(40, 10, 391, 71))
+        self.label.setGeometry(QtCore.QRect(20, 5, 195, 35))
         self.label.setObjectName("label")
 
         # 网卡显示label
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(40, 90, 321, 31))
+        self.label_2.setGeometry(QtCore.QRect(20, 45, 160, 15))
         self.label_2.setObjectName("label_2")
 
         #
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(140, 230, 831, 39))
+        self.lineEdit.setGeometry(QtCore.QRect(70, 115, 415, 20))
         self.lineEdit.setObjectName("lineEdit")
 
         # 启动监听
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(900, 80, 187, 51))
+        self.pushButton.setGeometry(QtCore.QRect(450, 40, 93, 25))
         self.pushButton.setObjectName("pushButton")
 
         # 监听pushButton按下
         self.pushButton.clicked.connect(self.OnpushButtonPressed)
 
-        # 停止监听
+        # 写入数据库
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(1110, 80, 187, 51))
+        self.pushButton_2.setGeometry(QtCore.QRect(555, 40, 180, 25))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(self.WriteIntoDBListener)
+
+        # 显示图表1
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(300, 76, 110, 25))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.clicked.connect(self.DisplayVbar)
+
+
 
         # 写入数据库
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(1010, 230, 261, 33))
+        self.label_3.setGeometry(QtCore.QRect(505, 115, 130, 16))
         self.label_3.setObjectName("label_3")
 
         self.tableView = QtWidgets.QTableWidget(self.centralwidget)
         self.tableView.setColumnCount(6)
-        self.tableView.setGeometry(QtCore.QRect(40, 290, 1851, 551))
+        self.tableView.setGeometry(QtCore.QRect(20, 145, 925, 225))
         self.tableView.setObjectName("tableView")
         self.tableView.horizontalHeader().setStretchLastSection(True)
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableView.itemClicked.connect(self.outSelect)
 
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setGeometry(QtCore.QRect(140, 160, 119, 39))
+        self.lineEdit_2.setGeometry(QtCore.QRect(70, 80, 57, 20))
         self.lineEdit_2.setObjectName("lineEdit_2")
 
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setGeometry(QtCore.QRect(40, 230, 114, 33))
+        self.label_4.setGeometry(QtCore.QRect(20, 115, 57, 16))
         self.label_4.setObjectName("label_4")
 
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(40, 160, 114, 33))
+        self.label_5.setGeometry(QtCore.QRect(20, 80, 57, 16))
         self.label_5.setObjectName("label_5")
 
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
-        self.toolButton.setGeometry(QtCore.QRect(1270, 230, 131, 39))
+        self.toolButton.setGeometry(QtCore.QRect(635, 115, 65, 20))
         self.toolButton.setObjectName("toolButton")
         self.toolButton.clicked.connect(self.open_dialog)
 
         self.label_9 = QtWidgets.QLabel(self.centralwidget)
-        self.label_9.setGeometry(QtCore.QRect(40, 860, 891, 771))
+        self.label_9.setGeometry(QtCore.QRect(20, 430, 445, 385))
         self.label_9.setObjectName("label_9")
 
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(290, 160, 151, 33))
+        self.label_6.setGeometry(QtCore.QRect(145, 80, 75, 16))
         self.label_6.setObjectName("label_6")
 
         self.spinBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.spinBox.setGeometry(QtCore.QRect(440, 160, 111, 41))
+        self.spinBox.setGeometry(QtCore.QRect(220, 80, 55, 20))
         self.spinBox.setObjectName("spinBox")
 
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(960, 860, 931, 791))
+        self.textBrowser.setGeometry(QtCore.QRect(480, 390, 465, 340))
         self.textBrowser.setObjectName("textBrowser")
 
-        self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox.setGeometry(QtCore.QRect(800, 160, 165, 37))
-        self.checkBox.setObjectName("checkBox")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_2.setGeometry(QtCore.QRect(1010, 160, 165, 37))
-        self.checkBox_2.setObjectName("checkBox_2")
-        self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_3.setGeometry(QtCore.QRect(1220, 160, 165, 37))
-        self.checkBox_3.setObjectName("checkBox_3")
-        self.checkBox_4 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_4.setGeometry(QtCore.QRect(1430, 160, 165, 37))
-        self.checkBox_4.setObjectName("checkBox_4")
-
-        self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(610, 160, 181, 33))
-        self.label_7.setObjectName("label_7")
 
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(1440, 230, 361, 33))
+        self.label_8.setGeometry(QtCore.QRect(720, 115, 180, 16))
         self.label_8.setObjectName("label_8")
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -176,7 +170,8 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Welcome to Snipa"))
         self.label_2.setText(_translate("MainWindow", "Aviliable Interfaces shown:"))
         self.pushButton.setText(_translate("MainWindow", "Start"))
-        self.pushButton_2.setText(_translate("MainWindow", "Pause"))
+        self.pushButton_2.setText(_translate("MainWindow", "Write into Database"))
+        self.pushButton_3.setText(_translate("MainWindow", "Dispaly vbar"))
         self.label_3.setText(_translate("MainWindow", "Write into Databse:"))
 
         self.tableView.setHorizontalHeaderLabels(['Time', 'Source', 'Destination', 'Protocol',
@@ -186,11 +181,6 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Count:"))
         self.toolButton.setText(_translate("MainWindow", "Settings"))
         self.label_6.setText(_translate("MainWindow", "TimeLimit："))
-        self.checkBox.setText(_translate("MainWindow", "write into database"))
-        self.checkBox_2.setText(_translate("MainWindow", "only UDP"))
-        self.checkBox_3.setText(_translate("MainWindow", "CheckBox"))
-        self.checkBox_4.setText(_translate("MainWindow", "CheckBox"))
-        self.label_7.setText(_translate("MainWindow", "QuickConfig:"))
 
         self.label_8.setText(_translate("MainWindow", "Status: " + self.config['DATABASE']['STATUS']))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
@@ -216,8 +206,6 @@ class Ui_MainWindow(object):
 
         args = {'count': self.lineEdit_2.text(),
                 'timeLimit': self.spinBox.text(),
-                'tcp': self.checkBox.isChecked(),
-                'udp': self.checkBox_2.isChecked(),
                 'filter': self.lineEdit.text(),
                 'iface': self.config['NETWORK']['CURRENT_CARD']}
 
@@ -244,13 +232,12 @@ class Ui_MainWindow(object):
             return
         index = self.tableView.currentIndex()
         self.createTextBrowser(index)
-        self.createTreeWidget(index)
+        #self.createTreeWidget(index)
 
 
     def createTreeWidget(self, index):
         info = self.pcaps[index.row()]
         info.psdump("test.eps")
-        os.remove('test.jpg')
         img = Image.open("test.eps")
         img.save("test.jpg", "JPEG")
         self.label_9.setPixmap(QPixmap("test.jpg").scaled(self.label_9.width(), self.label_9.height()))
@@ -262,6 +249,19 @@ class Ui_MainWindow(object):
             self.textBrowser.append(info.showdump())
         except:
             print('miss')
+
+    def WriteIntoDBListener(self):
+
+        rows = TableService(pcaps=self.pcaps,model=None).build()
+        insert(rows)
+
+        self.label_8.setText( "Status: " + "Successfully")
+
+    def DisplayVbar(self):
+        graph().createBarGraph()
+
+
+
 
 
 if __name__ == '__main__':

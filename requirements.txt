@@ -1,5 +1,5 @@
-pyqt5-installer
-scapy-python3
-Pillow
-configparser
-pymysql
+pyqt5==5.6.0
+scapy-python3==0.21
+pyx==0.14.1
+configparser==3.5.0
+pymysql==0.7.11

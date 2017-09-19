@@ -2,7 +2,6 @@
 ### Based on PyQT5,scapy
 ### A network sniff tool
 
-only support Linux
 
 ## Installation
 
@@ -12,6 +11,7 @@ Execute:
 git clone https://github.com/shawzh/snipa.git
 cd snipa 
 pip install requirements.txt
+
 ```
 
 Also need:

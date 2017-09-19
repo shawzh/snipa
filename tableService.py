@@ -9,10 +9,26 @@ class TableService():
 
         self.model = model
 
+
     def insertDataToTable(self):
 
         preRow = self.model.rowCount()
         self.model.setRowCount(preRow+self.pcaps.res.__len__())
+
+        #转换数据格式
+
+
+        for row in self.build():
+
+            for n, key in enumerate(row):
+                item = QTableWidgetItem(str(key))
+                self.model.setItem(preRow, n, item)
+            preRow = preRow+1
+
+
+
+    def build(self):
+        rows = []
         for p in self.pcaps:
             # 只有一层
             time = datetime.datetime.fromtimestamp(p.time).strftime("%Y-%m-%d %H:%M:%S")
@@ -25,11 +41,10 @@ class TableService():
             row = [time, src, dst, proto, length, raw]
             if row[2] == '239.255.255.250':
                 row[3] = 'SSDP'
+            rows.append(row)
+        return rows
 
-            for n, key in enumerate(row):
-                item = QTableWidgetItem(str(key))
-                self.model.setItem(preRow, n, item)
-            preRow = preRow+1
+
 
     def getSrc(self, p):
 
